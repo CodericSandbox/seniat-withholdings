@@ -7,7 +7,7 @@ import javax.persistence.Embeddable;
 public class Rif {
 
 	private Type type;
-	@Column(unique = true)
+	@Column(unique = true, length = 9)
 	private String number;
 
 	public enum Type {

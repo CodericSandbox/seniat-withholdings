@@ -9,44 +9,42 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
-public class Withholding {
+@Table(name = "withholdings")
+public class Withholding extends AbstractPersistable<Long> {
+	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	@Temporal(TemporalType.DATE)
+	private Date createdDate;
+
 	@ManyToOne(optional = false)
 	private Company company;
+
 	@ManyToOne(optional = false)
 	private Vendor vendor;
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
-	private Date modifiedAt;
+
 	@Enumerated(EnumType.STRING)
 	private Type type;
+
+	@Enumerated
 	private Operation operation;
+
 	@OneToMany(mappedBy = "withholding", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
 	private Set<Document> documents = new HashSet<Document>();
 
-	@Transient
-	@JsonIgnore
 	private double total;
-	@Transient
-	@JsonIgnore
+
 	private double base;
-	@Transient
-	@JsonIgnore
+
 	private double exempt;
 
 	public Withholding() {
@@ -56,13 +54,16 @@ public class Withholding {
 			Operation operation) {
 		this.company = company;
 		this.vendor = vendor;
-		this.createdAt = this.modifiedAt = new Date();
 		this.type = type;
 		this.operation = operation;
 	}
 
 	public enum Operation {
 		C, V
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
 	}
 
 	public enum Type {
@@ -75,14 +76,6 @@ public class Withholding {
 
 	public void setVendor(Vendor vendor) {
 		this.vendor = vendor;
-	}
-
-	public Date getModifiedAt() {
-		return modifiedAt;
-	}
-
-	public void setModifiedAt(Date modifiedAt) {
-		this.modifiedAt = modifiedAt;
 	}
 
 	public Type getType() {
@@ -107,10 +100,6 @@ public class Withholding {
 
 	public void setCompany(Company company) {
 		this.company = company;
-	}
-
-	public Date getCreatedAt() {
-		return createdAt;
 	}
 
 	public double getTotal() {
@@ -138,13 +127,15 @@ public class Withholding {
 		return this;
 	}
 
-	public void computeAmounts() {
+	@PrePersist
+	private void computeValues() {
 		total = base = exempt = 0d;
 		for (Document doc : documents) {
 			this.total += doc.getTotal();
 			this.base += doc.getBase();
 		}
 		this.exempt = this.total - this.base;
-	}
+		this.createdDate = new Date();
 
+	}
 }

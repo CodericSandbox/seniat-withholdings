@@ -8,36 +8,53 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import com.clufsolutions.seniatwithholdings.domain.embeddable.Address;
 import com.clufsolutions.seniatwithholdings.domain.embeddable.Rif;
 
 @Entity
-public class Company {
+@Table(name = "companies")
+public class Company extends AbstractPersistable<Long> {
+	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
 	@Embedded
 	private Rif rif;
+
 	@Column(unique = true)
 	private String name;
+
 	@Embedded
 	private Address address;
+
+	private long ivaStartNumber;
+	private long islrStartNumber;
+
 	@OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Tax> taxes = new HashSet<Tax>();
 
 	public Company() {
 	}
 
-	public Company(String name, Address address, Tax tax) {
+	public Company(Rif rif, String name, Address address, long ivaStartNumber,
+			long islrStartNumber, Set<Tax> taxes) {
+		this.rif = rif;
 		this.name = name;
 		this.address = address;
-		getTaxes().add(tax);
+		this.ivaStartNumber = ivaStartNumber;
+		this.islrStartNumber = islrStartNumber;
+		this.taxes = taxes;
+	}
+
+	public Rif getRif() {
+		return rif;
+	}
+
+	public void setRif(Rif rif) {
+		this.rif = rif;
 	}
 
 	public String getName() {
@@ -54,6 +71,22 @@ public class Company {
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	public long getIvaStartNumber() {
+		return ivaStartNumber;
+	}
+
+	public void setIvaStartNumber(long ivaStartNumber) {
+		this.ivaStartNumber = ivaStartNumber;
+	}
+
+	public long getIslrStartNumber() {
+		return islrStartNumber;
+	}
+
+	public void setIslrStartNumber(long islrStartNumber) {
+		this.islrStartNumber = islrStartNumber;
 	}
 
 	public Set<Tax> getTaxes() {

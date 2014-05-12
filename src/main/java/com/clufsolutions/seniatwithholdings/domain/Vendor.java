@@ -2,23 +2,25 @@ package com.clufsolutions.seniatwithholdings.domain;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import com.clufsolutions.seniatwithholdings.domain.embeddable.Address;
 import com.clufsolutions.seniatwithholdings.domain.embeddable.Rif;
 
 @Entity
-public class Vendor {
+@Table(name = "vendors")
+public class Vendor extends AbstractPersistable<Long> {
+	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
 	private String name;
+
 	private double whht;
+
 	@Embedded
 	private Rif rif;
+
 	private Address address;
 
 	public Vendor() {

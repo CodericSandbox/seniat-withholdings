@@ -4,28 +4,33 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-@Entity
-public class Document {
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+@Entity
+@Table(name = "documents")
+public class Document extends AbstractPersistable<Long> {
+	private static final long serialVersionUID = 1L;
+
 	@Enumerated
 	private Type type;
+
 	private String documentId;
+
 	private String documentControl;
+
 	@Temporal(TemporalType.DATE)
 	private Date date;
+
 	@ManyToOne
 	private Withholding withholding;
+
 	private double total;
+
 	private double base;
 
 	public enum Type {

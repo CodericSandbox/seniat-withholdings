@@ -1,10 +1,9 @@
 package com.clufsolutions.seniatwithholdings.repository;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.CrudRepository;
 
 import com.clufsolutions.seniatwithholdings.domain.Company;
 
-public interface TaxRepository extends
-		PagingAndSortingRepository<Company, Long> {
+public interface TaxRepository extends CrudRepository<Company, Long> {
 
 }

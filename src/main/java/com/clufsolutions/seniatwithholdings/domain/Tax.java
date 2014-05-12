@@ -2,25 +2,29 @@ package com.clufsolutions.seniatwithholdings.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
-public class Tax {
+@Table(name = "taxes")
+public class Tax extends AbstractPersistable<Long> {
+	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
 	@ManyToOne
 	private Company company;
+
 	@Column(unique = true)
 	private String name;
+
 	private String description;
+
 	@Column(precision = 3, scale = 3)
 	private float alicuote;
+
 	private boolean defaultIvaWithholding;
+
 	private boolean defaultIslrWithholding;
 
 	public Tax() {
