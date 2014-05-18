@@ -5,97 +5,62 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlType;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 @Table(name = "documents")
 public class Document extends AbstractPersistable<Long> {
+
+	@XmlType(name = "docType")
+	public enum Type {
+		CRE, DEB, INV
+	}
+
 	private static final long serialVersionUID = 1L;
+
+	@ManyToOne
+	private Document affected;
+
+	private double base;
+
+	private String controlNumber;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
+
+	private String documentId;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastModifiedDate;
+
+	private double total;
 
 	@Enumerated
 	private Type type;
 
-	private String documentId;
-
-	private String documentControl;
-
-	@Temporal(TemporalType.DATE)
-	private Date date;
-
 	@ManyToOne
 	private Withholding withholding;
 
-	private double total;
-
-	private double base;
-
-	public enum Type {
-		INV, DEB, CRE
-	}
-
-	public Document() {
-	}
-
-	public Document(Type type, String documentId, String documentControl,
-			Date date, double total, double base) {
-		this.type = type;
-		this.documentId = documentId;
-		this.documentControl = documentControl;
-		this.date = date;
-		this.total = total;
+	public Document(Type type, String documentId, double total, double base) {
 		this.base = base;
-	}
-
-	public Type getType() {
-		return type;
-	}
-
-	public void setType(Type type) {
+		this.documentId = documentId;
+		this.total = total;
 		this.type = type;
 	}
 
-	public String getDocumentId() {
-		return documentId;
+	public Document getAffected() {
+		return affected;
 	}
 
-	public void setDocumentId(String documentId) {
-		this.documentId = documentId;
-	}
-
-	public String getDocumentControl() {
-		return documentControl;
-	}
-
-	public void setDocumentControl(String documentControl) {
-		this.documentControl = documentControl;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public Withholding getWithholding() {
-		return withholding;
-	}
-
-	public void setWithholding(Withholding withholding) {
-		this.withholding = withholding;
-	}
-
-	public double getTotal() {
-		return total;
-	}
-
-	public void setTotal(double total) {
-		this.total = total;
+	public void setAffected(Document affected) {
+		this.affected = affected;
 	}
 
 	public double getBase() {
@@ -106,8 +71,71 @@ public class Document extends AbstractPersistable<Long> {
 		this.base = base;
 	}
 
-	public double getExempt() {
-		return total - base;
+	public String getControlNumber() {
+		return controlNumber;
+	}
+
+	public void setControlNumber(String controlNumber) {
+		this.controlNumber = controlNumber;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getDocumentId() {
+		return documentId;
+	}
+
+	public void setDocumentId(String documentId) {
+		this.documentId = documentId;
+	}
+
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
+	public double getTotal() {
+		return total;
+	}
+
+	public void setTotal(double total) {
+		this.total = total;
+	}
+
+	public Type getType() {
+		return type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	public Withholding getWithholding() {
+		return withholding;
+	}
+
+	public void setWithholding(Withholding withholding) {
+		this.withholding = withholding;
+	}
+
+	@PrePersist
+	protected void prePersist() {
+		setCreatedDate(new Date());
+		setLastModifiedDate(new Date());
+	}
+
+	@PreUpdate
+	protected void preUpdate() {
+		setLastModifiedDate(new Date());
 	}
 
 }

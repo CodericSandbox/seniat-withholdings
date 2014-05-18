@@ -12,86 +12,58 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlType;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 @Table(name = "withholdings")
 public class Withholding extends AbstractPersistable<Long> {
-	private static final long serialVersionUID = 1L;
-
-	@Temporal(TemporalType.DATE)
-	private Date createdDate;
-
-	@ManyToOne(optional = false)
-	private Company company;
-
-	@ManyToOne(optional = false)
-	private Vendor vendor;
-
-	@Enumerated(EnumType.STRING)
-	private Type type;
-
-	@Enumerated
-	private Operation operation;
-
-	@OneToMany(mappedBy = "withholding", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-	private Set<Document> documents = new HashSet<Document>();
-
-	private double total;
-
-	private double base;
-
-	private double exempt;
-
-	public Withholding() {
-	}
-
-	public Withholding(Company company, Vendor vendor, Type type,
-			Operation operation) {
-		this.company = company;
-		this.vendor = vendor;
-		this.type = type;
-		this.operation = operation;
-	}
 
 	public enum Operation {
 		C, V
 	}
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
+	@XmlType(name = "whType")
 	public enum Type {
-		IVA, ISLR
+		ISLR, IVA
 	}
 
-	public Vendor getVendor() {
-		return vendor;
+	private static final long serialVersionUID = 1L;
+
+	@ManyToOne(optional = false)
+	private Company company;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
+
+	@OneToMany(mappedBy = "withholding", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+	private Set<Document> documents = new HashSet<Document>();
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastModifiedDate;
+
+	@Enumerated
+	private Operation operation;
+
+	@Enumerated(EnumType.STRING)
+	private Type type;
+
+	@ManyToOne(optional = false)
+	private Vendor vendor;
+
+	public Withholding() {
 	}
 
-	public void setVendor(Vendor vendor) {
-		this.vendor = vendor;
-	}
-
-	public Type getType() {
-		return type;
-	}
-
-	public void setType(Type type) {
-		this.type = type;
-	}
-
-	public Operation getOperation() {
-		return operation;
-	}
-
-	public void setOperation(Operation operation) {
+	public Withholding(Company company, Vendor vendor, Type type, Operation operation) {
+		this.company = company;
 		this.operation = operation;
+		this.type = type;
+		this.vendor = vendor;
 	}
 
 	public Company getCompany() {
@@ -102,16 +74,12 @@ public class Withholding extends AbstractPersistable<Long> {
 		this.company = company;
 	}
 
-	public double getTotal() {
-		return total;
+	public Date getCreatedDate() {
+		return createdDate;
 	}
 
-	public double getBase() {
-		return base;
-	}
-
-	public double getExempt() {
-		return exempt;
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
 
 	public Set<Document> getDocuments() {
@@ -122,20 +90,47 @@ public class Withholding extends AbstractPersistable<Long> {
 		this.documents = documents;
 	}
 
-	public Withholding addDocument(Document document) {
-		this.documents.add(document);
-		return this;
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
+	public Operation getOperation() {
+		return operation;
+	}
+
+	public void setOperation(Operation operation) {
+		this.operation = operation;
+	}
+
+	public Type getType() {
+		return type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	public Vendor getVendor() {
+		return vendor;
+	}
+
+	public void setVendor(Vendor vendor) {
+		this.vendor = vendor;
 	}
 
 	@PrePersist
-	private void computeValues() {
-		total = base = exempt = 0d;
-		for (Document doc : documents) {
-			this.total += doc.getTotal();
-			this.base += doc.getBase();
-		}
-		this.exempt = this.total - this.base;
-		this.createdDate = new Date();
-
+	protected void prePersist() {
+		setCreatedDate(new Date());
+		setLastModifiedDate(new Date());
 	}
+
+	@PreUpdate
+	protected void preUpdate() {
+		setLastModifiedDate(new Date());
+	}
+
 }

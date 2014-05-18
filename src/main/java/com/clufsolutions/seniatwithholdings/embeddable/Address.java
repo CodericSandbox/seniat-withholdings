@@ -1,4 +1,4 @@
-package com.clufsolutions.seniatwithholdings.domain.embeddable;
+package com.clufsolutions.seniatwithholdings.embeddable;
 
 import javax.persistence.Embeddable;
 
@@ -14,8 +14,7 @@ public class Address {
 	private State state;
 	private City city;
 
-	public Address(String line1, String line2, String phone1, State state,
-			City city) {
+	public Address(String line1, String line2, String phone1, State state, City city) {
 		this.line1 = line1;
 		this.line2 = line2;
 		this.phone1 = phone1;
@@ -124,6 +123,11 @@ public class Address {
 
 	public void setCity(City city) {
 		this.city = city;
+	}
+
+	@Override
+	public String toString() {
+		return line1 + " " + line2 + ", " + city + ", " + state;
 	}
 
 }

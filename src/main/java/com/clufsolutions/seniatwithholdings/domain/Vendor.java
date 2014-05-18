@@ -3,11 +3,12 @@ package com.clufsolutions.seniatwithholdings.domain;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
-import com.clufsolutions.seniatwithholdings.domain.embeddable.Address;
-import com.clufsolutions.seniatwithholdings.domain.embeddable.Rif;
+import com.clufsolutions.seniatwithholdings.embeddable.Address;
+import com.clufsolutions.seniatwithholdings.embeddable.Rif;
 
 @Entity
 @Table(name = "vendors")
@@ -57,12 +58,22 @@ public class Vendor extends AbstractPersistable<Long> {
 		return rif;
 	}
 
+	@XmlElement
+	public String getRifString() {
+		return getRif().toString();
+	}
+
 	public void setRif(Rif rif) {
 		this.rif = rif;
 	}
 
 	public Address getAddress() {
 		return address;
+	}
+
+	@XmlElement
+	public String getAddressString() {
+		return getAddress().toString();
 	}
 
 	public void setAddress(Address address) {
