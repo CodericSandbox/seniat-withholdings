@@ -12,10 +12,10 @@ import com.clufsolutions.seniatwithholdings.domain.Vendor;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlVendor {
 
+	private String rif;
 	private String name;
 	@XmlJavaTypeAdapter(XmlDoubleAdapter.class)
 	private Double whht;
-	private String rif;
 	private String address;
 
 	public XmlVendor() {

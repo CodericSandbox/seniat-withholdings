@@ -48,6 +48,9 @@ public class Document extends AbstractPersistable<Long> {
 	@ManyToOne
 	private Withholding withholding;
 
+	public Document() {
+	}
+
 	public Document(Type type, String documentId, double total, double base) {
 		this.base = base;
 		this.documentId = documentId;

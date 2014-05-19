@@ -1,19 +1,18 @@
 package com.clufsolutions.seniatwithholdings.domain;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
@@ -41,25 +40,24 @@ public class Company extends AbstractPersistable<Long> {
 	private long islrStartId;
 
 	@OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Set<Tax> taxes = new HashSet<Tax>();
+	@MapKey(name = "name")
+	private Map<String, Tax> taxes = new HashMap<String, Tax>();
 
 	public Company() {
 	}
 
-	public Company(Rif rif, String name, Address address, long ivaStartNumber, long islrStartNumber, Set<Tax> taxes) {
+	public Company(Rif rif, String name, Address address, long ivaStartNumber, long islrStartNumber) {
 		this.rif = rif;
 		this.name = name;
 		this.address = address;
 		this.ivaStartId = ivaStartNumber;
 		this.islrStartId = islrStartNumber;
-		this.taxes = taxes;
 	}
 
 	public Rif getRif() {
 		return rif;
 	}
 
-	@XmlElement(name = "rifString")
 	public String getRifString() {
 		return getRif().toString();
 	}
@@ -72,7 +70,6 @@ public class Company extends AbstractPersistable<Long> {
 		return address;
 	}
 
-	@XmlElement
 	public String getAddressString() {
 		return getAddress().toString();
 	}
@@ -85,14 +82,16 @@ public class Company extends AbstractPersistable<Long> {
 		return islrStartId;
 	}
 
-	@XmlElementWrapper
-	@XmlElement(name = "tax")
-	public Set<Tax> getTaxes() {
+	public void setRif(Rif rif) {
+		this.rif = rif;
+	}
+
+	public Map<String, Tax> getTaxes() {
 		return taxes;
 	}
 
-	public void setRif(Rif rif) {
-		this.rif = rif;
+	public void setTaxes(Map<String, Tax> taxes) {
+		this.taxes = taxes;
 	}
 
 	public void setName(String name) {
@@ -109,10 +108,6 @@ public class Company extends AbstractPersistable<Long> {
 
 	public void setIslrStartId(long islrStartId) {
 		this.islrStartId = islrStartId;
-	}
-
-	public void setTaxes(Set<Tax> taxes) {
-		this.taxes = taxes;
 	}
 
 }

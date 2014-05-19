@@ -1,7 +1,7 @@
 package com.clufsolutions.seniatwithholdings;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -81,7 +81,7 @@ public class Application implements CommandLineRunner {
 		try {
 			Marshaller m = JAXBContext.newInstance(XmlWithholding.class, XmlDocument.class).createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			m.marshal(new XmlWithholding(w1, 12f), System.out);
+			m.marshal(new XmlWithholding(w1, w1.getCompany().getTaxes().get("IVA").getAlicuote()), System.out);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
@@ -116,7 +116,9 @@ public class Application implements CommandLineRunner {
 
 	private void createCompany() {
 		c1 = new Company(new Rif(Rif.Type.V, "11289937"), "Cluf Consulting C.A", new Address("Calle 2 Casa 2", "Las Morochas", "4146711769", Address.State.ZU,
-				Address.City.OJEDA), 1l, 1l, new HashSet<Tax>(Arrays.asList(new Tax("IVA", 12f, true, false))));
+				Address.City.OJEDA), 1l, 1l);
+		c1.getTaxes().put("IVA", new Tax(c1, "IVA", 12f, true, false));
+		
 		companyRepository.save(c1);
 	}
 

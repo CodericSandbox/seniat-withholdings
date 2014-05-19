@@ -4,11 +4,13 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.clufsolutions.seniatwithholdings.adapter.XmlDateAdapter;
 import com.clufsolutions.seniatwithholdings.adapter.XmlDoubleAdapter;
+import com.clufsolutions.seniatwithholdings.adapter.XmlFloatAdapter;
 import com.clufsolutions.seniatwithholdings.domain.Document;
 import com.clufsolutions.seniatwithholdings.domain.Document.Type;
 
@@ -18,11 +20,16 @@ public class XmlDocument implements Comparable<XmlDocument> {
 
 	private int item;
 	private Type type;
+	@XmlElement(nillable = true)
 	private String invoiceId;
+	@XmlElement(nillable = true)
 	private String debitNoteId;
+	@XmlElement(nillable = true)
 	private String creditNoteId;
+	@XmlElement(nillable = true)
 	private String controlNumber;
-	private Document affected;
+	@XmlElement(nillable = true)
+	private String affected;
 	@XmlJavaTypeAdapter(XmlDateAdapter.class)
 	private Date createdDate;
 	@XmlJavaTypeAdapter(XmlDoubleAdapter.class)
@@ -35,13 +42,16 @@ public class XmlDocument implements Comparable<XmlDocument> {
 	private Double taxAmount;
 	@XmlJavaTypeAdapter(XmlDoubleAdapter.class)
 	private Double wittheld;
+	@XmlJavaTypeAdapter(XmlFloatAdapter.class)
+	private Float taxAliquot;
 
 	public XmlDocument() {
 	}
 
 	public XmlDocument(Document ref, int item, float taxAliquot) {
+		this.taxAliquot = taxAliquot;
 		this.item = item;
-		this.affected = ref.getAffected();
+		this.affected = ref.getAffected() == null ? null : ref.getAffected().getDocumentId();
 		this.base = ref.getBase();
 		this.controlNumber = ref.getControlNumber();
 		this.createdDate = ref.getCreatedDate();
@@ -111,11 +121,11 @@ public class XmlDocument implements Comparable<XmlDocument> {
 		this.createdDate = createdDate;
 	}
 
-	public Document getAffected() {
+	public String getAffected() {
 		return affected;
 	}
 
-	public void setAffected(Document affected) {
+	public void setAffected(String affected) {
 		this.affected = affected;
 	}
 
@@ -157,6 +167,14 @@ public class XmlDocument implements Comparable<XmlDocument> {
 
 	public void setWittheld(Double wittheld) {
 		this.wittheld = wittheld;
+	}
+
+	public Float getTaxAliquot() {
+		return taxAliquot;
+	}
+
+	public void setTaxAliquot(Float taxAliquot) {
+		this.taxAliquot = taxAliquot;
 	}
 
 	@Override

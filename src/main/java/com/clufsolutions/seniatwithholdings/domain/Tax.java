@@ -7,12 +7,15 @@ import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "taxes")
 public class Tax extends AbstractPersistable<Long> {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
+	@JsonIgnore
 	private Company company;
 
 	@Column(unique = true)
@@ -30,7 +33,8 @@ public class Tax extends AbstractPersistable<Long> {
 	public Tax() {
 	}
 
-	public Tax(String name, float alicuote, boolean iva, boolean islr) {
+	public Tax(Company company, String name, float alicuote, boolean iva, boolean islr) {
+		this.company = company;
 		this.name = name;
 		this.alicuote = alicuote;
 		this.defaultIvaWithholding = iva;

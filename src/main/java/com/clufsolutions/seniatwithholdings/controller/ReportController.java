@@ -23,6 +23,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.clufsolutions.seniatwithholdings.domain.Withholding;
 import com.clufsolutions.seniatwithholdings.repository.WithholdingRepository;
+import com.clufsolutions.seniatwithholdings.utils.TaxUtils;
+import com.clufsolutions.seniatwithholdings.xml.XmlCompany;
+import com.clufsolutions.seniatwithholdings.xml.XmlDocument;
+import com.clufsolutions.seniatwithholdings.xml.XmlVendor;
+import com.clufsolutions.seniatwithholdings.xml.XmlWithholding;
 
 @Controller
 public class ReportController {
@@ -40,13 +45,18 @@ public class ReportController {
 		String inputfilepath = System.getProperty("user.dir") + String.format("/%s.docx", "IN");
 
 		Withholding wh = whRepo.findOne(Long.parseLong(number));
+		for (String key : wh.getCompany().getTaxes().keySet()) {
+			System.out.println(wh.getCompany().getTaxes().get(key).getAlicuote());
+		}
+		XmlWithholding xmlWh = new XmlWithholding(wh, TaxUtils.getAliquot(wh, "IVA"));
 
 		try {
 			file = File.createTempFile("export-", ".docx");
 			WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(new java.io.File(inputfilepath));
 
-			Docx4J.bind(wordMLPackage, XmlUtils.marshaltoInputStream(wh, true, JAXBContext.newInstance(Withholding.class)), Docx4J.FLAG_BIND_INSERT_XML
-					| Docx4J.FLAG_BIND_BIND_XML);
+			Docx4J.bind(wordMLPackage, XmlUtils.marshaltoInputStream(xmlWh, true,
+					JAXBContext.newInstance(XmlWithholding.class, XmlCompany.class, XmlDocument.class, XmlVendor.class)), 
+					Docx4J.FLAG_BIND_INSERT_XML	| Docx4J.FLAG_BIND_BIND_XML);
 			Docx4J.save(wordMLPackage, file, Docx4J.FLAG_NONE);
 
 		} catch (Docx4JException | IOException | JAXBException e) {
@@ -58,4 +68,5 @@ public class ReportController {
 
 		return IOUtils.toByteArray(new FileInputStream(file));
 	}
+
 }
