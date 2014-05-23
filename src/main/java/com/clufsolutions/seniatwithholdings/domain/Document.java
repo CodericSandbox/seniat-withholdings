@@ -13,6 +13,10 @@ import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlType;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.clufsolutions.seniatwithholdings.adapter.JsonDateSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "documents")
@@ -32,12 +36,16 @@ public class Document extends AbstractPersistable<Long> {
 
 	private String controlNumber;
 
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
+	@JsonSerialize(using = JsonDateSerializer.class)
 	private Date createdDate;
 
 	private String documentId;
 
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
+	@JsonSerialize(using = JsonDateSerializer.class)
 	private Date lastModifiedDate;
 
 	private double total;

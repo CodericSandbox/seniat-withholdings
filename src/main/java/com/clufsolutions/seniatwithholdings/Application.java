@@ -1,7 +1,6 @@
 package com.clufsolutions.seniatwithholdings;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
