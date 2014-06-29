@@ -9,9 +9,9 @@ buildscript {
 }
 
 apply plugin: 'java'
-apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
+apply plugin: 'war'
 
 jar {
     baseName = 'seniat-withholdings-VE'
@@ -27,12 +27,13 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
     compile("com.h2database:h2")
-    compile("joda-time:joda-time:2.3")
     compile("org.springframework.data:spring-data-rest-webmvc")
+    compile("joda-time:joda-time:2.3")
 	compile("org.docx4j:docx4j:3.1.0"){
 		exclude(module:"slf4j-log4j12")
 		exclude(module:"log4j")
 	}
+    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 }
 
 task wrapper(type: Wrapper) {

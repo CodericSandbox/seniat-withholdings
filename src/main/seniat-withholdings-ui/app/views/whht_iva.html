@@ -1,0 +1,11 @@
+<form novalidate>
+  <input type="search" ng-model="search" placeholder="search" /><br />
+</form>
+
+<p ng-if="withholdings.count === 0">Todavia no ha creado ninguna Retención IVA</p>
+
+<ul>
+  <li ng-repeat="currentWithholding in withholdings">
+    <a href ng-bind="currentWithholding.number"></a>
+  </li>
+</ul>

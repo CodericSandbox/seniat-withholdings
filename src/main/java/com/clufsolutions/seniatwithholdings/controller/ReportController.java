@@ -60,9 +60,6 @@ public class ReportController {
 		String inputfilepath = System.getProperty("user.dir") + String.format("/%s.docx", "IN");
 
 		Withholding wh = whRepo.findOne(Long.parseLong(number));
-		for (String key : wh.getCompany().getTaxes().keySet()) {
-			System.out.println(wh.getCompany().getTaxes().get(key).getAlicuote());
-		}
 		XmlWithholding xmlWh = new XmlWithholding(wh, TaxUtils.getAliquot(wh, "IVA"));
 
 		try {
@@ -92,20 +89,21 @@ public class ReportController {
 			HttpServletResponse res) throws FileNotFoundException, IOException, ParseException {
 
 		Set<Withholding> whs = whRepo.findByCreatedDateBetween(from, (to == null ? new Date() : to));
-		System.out.println("==================================================================" + whs.size());
-		System.out.println("from: " + from + ", to:" + to);
 
 		file = File.createTempFile("export", ".txt");
 		CharSequence formatedDate;
 		Writer fw = new FileWriter(file);
+		
+		Withholding wh;
+		Document doc;
 
 		for (int i = 0; i < whs.size(); i++) {
-			Withholding wh = (Withholding) whs.toArray()[i];
+			wh = (Withholding) whs.toArray()[i];
 
 			formatedDate = formatDate("yyyyMM", wh.getCreatedDate());
 
-			for (int j = 0; j < wh.getDocuments().size(); i++) {
-				Document doc = (Document) wh.getDocuments().toArray()[j];
+			for (int j = 0; j < wh.getDocuments().size(); j++) {
+				doc = (Document) wh.getDocuments().toArray()[j];
 
 				fw.append(wh.getCompany().getRifString())
 						.append("\t")
@@ -136,7 +134,6 @@ public class ReportController {
 						.append("\t")
 						.append(String.valueOf(String.format(Locale.US, "%.2f", TaxUtils.getAliquot(wh, "IVA"))));
 
-				// No es la última linea
 				if (i != whs.size() - 1 | j != wh.getDocuments().size() - 1) {
 					fw.append("\r\n");
 				}

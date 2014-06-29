@@ -177,7 +177,6 @@ public class XmlDocument implements Comparable<XmlDocument> {
 		this.taxAliquot = taxAliquot;
 	}
 
-	@Override
 	public int compareTo(XmlDocument other) {
 		return (getItem() > other.getItem() ? 1 : (getItem() == other.getItem() ? 0 : -1));
 	}
